@@ -27,30 +27,30 @@ def get_jobs(soup):
     jobs = []
     for job in job_list:
         title = job.find("a", class_="jobtitle").text.strip()
-        print(title)
         url = job.find("a", href=True)
         url = "https://www.indeed.com" + url['href']
-        print(url)
         company = job.find("span", class_="company").text.strip()
-        print(company)
         try:
             location = job.find("span", class_="location").text.strip()
-            print(location)
         except (TypeError, AttributeError):
-            print("no location found")
             location = ""
         summary = job.find("div", class_="summary").text.strip()
-        print(summary)
         date = job.find("span", class_="date").text.strip()
-        print (date)
-        print("")
-        jobs.append((title, url, company, location, summary, date))
+        if (location == "Remote"):
+            jobs.append((title, url, company, location, summary, date))
+        
     return jobs
 
         
 
 
 get_number_of_jobs()
+print("")
 get_next_page(soup)
-get_jobs(soup)
+job_list = get_jobs(soup)
 
+
+for job_info in job_list:
+    for job in job_info:
+        print(job)
+    print("")
