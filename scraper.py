@@ -30,14 +30,18 @@ def get_jobs(soup):
         print(title)
         company = job.find("span", class_="company").text.strip()
         print(company)
-        #location = job.find("span", class_="location").text.strip()
-        #print(location)
+        try:
+            location = job.find("span", class_="location").text.strip()
+            print(location)
+        except (TypeError, AttributeError):
+            print("no location found")
+            location = ""
         summary = job.find("div", class_="summary").text.strip()
         print(summary)
         date = job.find("span", class_="date").text.strip()
         print (date)
         print("")
-        jobs.append((title, company, summary, date))
+        jobs.append((title, company, location, summary, date))
     return jobs
 
         
