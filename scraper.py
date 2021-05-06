@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import time
 
 URL = "https://www.indeed.com/jobs?q=javascript&l="
 
