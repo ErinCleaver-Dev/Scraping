@@ -58,13 +58,16 @@ def generate_jobs_array(job_list, soup):
         soup = BeautifulSoup(page.content, 'html.parser')
         return generate_jobs_array(job_list, soup)
     except (TypeError, AttributeError):
-        return jobs_list
+        return job_list
 
 
-
+count = 0;
 job_list = generate_jobs_array(job_list, soup)
 for job_info in job_list:
     for gathered_job in gathered_jobs:
         for job in gathered_job:
+            count+=1;
             print(job)
         print("")
+
+print(count)
