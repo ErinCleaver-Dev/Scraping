@@ -28,6 +28,9 @@ def get_jobs(soup):
     for job in job_list:
         title = job.find("a", class_="jobtitle").text.strip()
         print(title)
+        url = job.find("a", href=True)
+        url = "https://www.indeed.com" + url['href']
+        print(url)
         company = job.find("span", class_="company").text.strip()
         print(company)
         try:
@@ -41,7 +44,7 @@ def get_jobs(soup):
         date = job.find("span", class_="date").text.strip()
         print (date)
         print("")
-        jobs.append((title, company, location, summary, date))
+        jobs.append((title, url, company, location, summary, date))
     return jobs
 
         
