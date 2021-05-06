@@ -27,6 +27,7 @@ def get_jobs(soup):
     jobs = []
     for job in job_list:
         title = job.find("a", class_="jobtitle").text.strip()
+        print(title)
         url = job.find("a", href=True)
         url = "https://www.indeed.com" + url['href']
         company = job.find("span", class_="company").text.strip()
@@ -46,10 +47,21 @@ def get_jobs(soup):
 
 get_number_of_jobs()
 print("")
+
 get_next_page(soup)
-job_list = get_jobs(soup)
+job_list = [];
+
+def generate_jobs_array(job_list, soup):
+    if(get_next_page(soup) == None):
+        return job_list
+    job_list.append(get_jobs(soup))
+    URL = get_next_page(soup)
+    page = requests.get(URL)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    return generate_jobs_array(job_list, soup)
 
 
+job_list = generate_jobs_array(job_list, soup)
 for job_info in job_list:
     for job in job_info:
         print(job)
