@@ -22,6 +22,7 @@ def get_next_page(soup):
     next_page = f"https://www.indeed.com/{last_page}"
     return next_page
 
+#gets the information for each jobs on the page
 def get_jobs(soup):
     job_list = soup.find_all("div", class_="jobsearch-SerpJobCard")
     jobs = []
@@ -56,9 +57,11 @@ print("")
 get_next_page(soup)
 job_list = [];
 
+
+# gathers a list of jobs.  
 def generate_jobs_array(job_list, soup):
     try:
-        job_list.append(get_jobs(soup))
+        job_list+=get_jobs(soup)
         URL = get_next_page(soup)
         page = requests.get(URL)
         soup = BeautifulSoup(page.content, 'html.parser')
@@ -70,15 +73,14 @@ def generate_jobs_array(job_list, soup):
 count = 0
 job_list = generate_jobs_array(job_list, soup)
 for job_info in job_list:
-    for gathered_job in job_info:
-        print("Title: ",gathered_job[0])
-        print("Url: ", gathered_job[1] )
-        print("Company: ", gathered_job[2])
-        print("Location: ", gathered_job[3])
-        print ("Details: ",gathered_job[4])
-        print ("Days: ", gathered_job[5])
-        print("")        
-        count +=1
+    print("Title: ",job_info[0])
+    print("Url: ", job_info[1] )
+    print("Company: ", job_info[2])
+    print("Location: ", job_info[3])
+    print ("Details: ",job_info[4])
+    print ("Days: ", job_info[5])
+    print("")        
+    count +=1
 
 
 print(count)
