@@ -36,10 +36,15 @@ def get_jobs(soup):
         except (TypeError, AttributeError):
             location = ""
         summary = job.find("div", class_="summary").text.strip()
-        date = job.find("span", class_="date").text.strip()
-        if (location == "Remote"):
+        date = job.find("span", class_="date").text.strip().split(" ")
+        date = date[0];
+        day = 8;
+        if(date.isnumeric()): 
+           day = int(date)
+        if (location == "Remote" and (day < 8 or date == "Today")):
             jobs.append((title, url, company, location, summary, date))
-        
+    
+    print("\n\n")
     return jobs
 
         
@@ -66,9 +71,12 @@ count = 0
 job_list = generate_jobs_array(job_list, soup)
 for job_info in job_list:
     for gathered_job in job_info:
-        for job in gathered_job:
-            print(job)
-
+        print("Title: ",gathered_job[0])
+        print("Url: ", gathered_job[1] )
+        print("Company: ", gathered_job[2])
+        print("Location: ", gathered_job[3])
+        print ("Details: ",gathered_job[4])
+        print ("Days: ", gathered_job[5])
         print("")        
         count +=1
 
