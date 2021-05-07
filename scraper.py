@@ -77,7 +77,7 @@ for job_info in job_list:
     print("Url: ", job_info[1] )
     print("Company: ", job_info[2])
     print("Location: ", job_info[3])
-    print ("Details: ",job_info[4])
+    print ("Summary: ",job_info[4])
     print ("Days: ", job_info[5])
     print("")        
     count +=1
