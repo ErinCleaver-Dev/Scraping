@@ -26,6 +26,7 @@ def get_jobs(soup):
     job_list = soup.find_all("div", class_="jobsearch-SerpJobCard")
     jobs = []
     for job in job_list:
+        print("Gathering jobs")
         title = job.find("a", class_="jobtitle").text.strip()
         url = job.find("a", href=True)
         url = "https://www.indeed.com" + url['href']
@@ -61,13 +62,15 @@ def generate_jobs_array(job_list, soup):
         return job_list
 
 
-count = 0;
+count = 0
 job_list = generate_jobs_array(job_list, soup)
 for job_info in job_list:
-    for gathered_job in gathered_jobs:
+    for gathered_job in job_info:
         for job in gathered_job:
-            count+=1;
             print(job)
-        print("")
+
+        print("")        
+        count +=1
+
 
 print(count)
