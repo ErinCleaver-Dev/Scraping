@@ -47,7 +47,6 @@ def get_jobs(soup, type):
         summary = job.find("div", class_="summary").text.strip()
         date = job.find("span", class_="date").text.strip().split(" ")
         date = date[0];
-        day = 8;
         
         if(date.isnumeric()): 
            day = int(date)
