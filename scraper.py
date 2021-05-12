@@ -90,15 +90,18 @@ def generate_jobs_array(job_list, soup, type):
 
 
 soup = get_soup("https://www.indeed.com/jobs?q=javascript&l=")
-
 get_number_of_jobs(soup)
 
-get_next_page(soup)
-soup = get_soup("https://www.indeed.com/jobs?q=react&l")
+job_list += generate_jobs_array(job_list, soup, "javascript")
 
-get_next_page(soup)
+soup = get_soup("https://www.indeed.com/jobs?q=react&l")
+get_number_of_jobs(soup)
+
+job_list += generate_jobs_array(job_list, soup, "react")
+
 soup = get_soup("https://www.indeed.com/jobs?q=python&l=")
-get_next_page(soup)
+get_number_of_jobs(soup)
+
 job_list += generate_jobs_array(job_list, soup, "python")
 
 
