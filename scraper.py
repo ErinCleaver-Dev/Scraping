@@ -26,8 +26,9 @@ def get_next_page(soup):
 def get_jobs(soup):
     job_list = soup.find_all("div", class_="jobsearch-SerpJobCard")
     jobs = []
+
+    job_list_dict = {}
     for job in job_list:
-        print("Gathering jobs")
         title = job.find("a", class_="jobtitle").text.strip()
         url = job.find("a", href=True)
         url = "https://www.indeed.com" + url['href']
@@ -36,14 +37,32 @@ def get_jobs(soup):
             location = job.find("span", class_="location").text.strip()
         except (TypeError, AttributeError):
             location = ""
+        rating = job.find("span", class_="rating")
+        if rating: 
+            rating.text.strip()
+        else: 
+            ""
         summary = job.find("div", class_="summary").text.strip()
         date = job.find("span", class_="date").text.strip().split(" ")
         date = date[0];
         day = 8;
+        
         if(date.isnumeric()): 
            day = int(date)
         if (location == "Remote" and (day < 8 or date == "Today")):
-            jobs.append((title, url, company, location, summary, date))
+            job_list_dict = {
+                "title": title if title else None,
+                "url": url if url else None,
+                "company": company if company else None,
+                "rating": rating if rating else None,
+                "location": location if location else None,
+                "summary": summary if summary else None,
+                "date": date if date else None   
+               }
+
+        if(job_list_dict):
+            jobs.append(job_list_dict)
+        
     
     print("\n\n")
     return jobs
@@ -57,30 +76,33 @@ print("")
 get_next_page(soup)
 job_list = [];
 
-
 # gathers a list of jobs.  
 def generate_jobs_array(job_list, soup):
-    try:
-        job_list+=get_jobs(soup)
-        URL = get_next_page(soup)
-        page = requests.get(URL)
-        soup = BeautifulSoup(page.content, 'html.parser')
-        return generate_jobs_array(job_list, soup)
-    except (TypeError, AttributeError):
-        return job_list
+    for i in range(100):
+        try:
+            job_list+=get_jobs(soup)
+            URL = get_next_page(soup)
+            print(URL)
+            page = requests.get(URL)
+            soup = BeautifulSoup(page.content, 'html.parser')
+        except (TypeError, AttributeError):
+            break
+
+    return job_list
+
+    
 
 
-count = 0
 job_list = generate_jobs_array(job_list, soup)
+
+print(len(job_list))
 for job_info in job_list:
-    print("Title: ",job_info[0])
-    print("Url: ", job_info[1] )
-    print("Company: ", job_info[2])
-    print("Location: ", job_info[3])
-    print ("Summary: ",job_info[4])
-    print ("Days: ", job_info[5])
-    print("")        
-    count +=1
-
-
-print(count)
+    for gathered_job in job_info:
+        print("Title: ", job_info["title"] )
+        print("Url: ", job_info["url"])
+        print("Company: ", job_info["company"])
+        print ("Rating: ",job_info["rating"])
+        print ("Localtion: ",job_info["location"])
+        print ("Summary: ", job_info["summary"])
+        print ("Date: ", job_info["date"])
+        print("")        
