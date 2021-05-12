@@ -2,14 +2,16 @@ import requests
 from bs4 import BeautifulSoup
 import time
 
-URL = "https://www.indeed.com/jobs?q=javascript&l="
 
-page = requests.get(URL)
+def get_soup (url):
+    URL = url
+    page = requests.get(URL)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    return soup
 
-soup = BeautifulSoup(page.content, 'html.parser')
 
 # gets the number of jobs and printers out the value - Erin Cleaver
-def get_number_of_jobs():
+def get_number_of_jobs(soup):
     count_pages_list = soup.find(id="searchCountPages").text.strip().split()
     number_of_jobs = int(count_pages_list[3].replace(',', ""))
     print(f"Number of jobs {number_of_jobs}")
@@ -23,7 +25,7 @@ def get_next_page(soup):
     return next_page
 
 #gets the information for each jobs on the page
-def get_jobs(soup):
+def get_jobs(soup, type):
     job_list = soup.find_all("div", class_="jobsearch-SerpJobCard")
     jobs = []
 
@@ -49,7 +51,7 @@ def get_jobs(soup):
         
         if(date.isnumeric()): 
            day = int(date)
-        if (location == "Remote" and (day < 8 or date == "Today")):
+        if (location == "Remote" and (day < 2 or date == "Today")):
             job_list_dict = {
                 "title": title if title else None,
                 "url": url if url else None,
@@ -57,7 +59,8 @@ def get_jobs(soup):
                 "rating": rating if rating else None,
                 "location": location if location else None,
                 "summary": summary if summary else None,
-                "date": date if date else None   
+                "date": date if date else None,   
+                "type": type if type else None
                }
 
         if(job_list_dict):
@@ -69,33 +72,36 @@ def get_jobs(soup):
 
         
 
-
-get_number_of_jobs()
-print("")
-
-get_next_page(soup)
 job_list = [];
 
 # gathers a list of jobs.  
-def generate_jobs_array(job_list, soup):
+def generate_jobs_array(job_list, soup, type):
     for i in range(100):
         try:
-            job_list+=get_jobs(soup)
-            URL = get_next_page(soup)
-            print(URL)
-            page = requests.get(URL)
-            soup = BeautifulSoup(page.content, 'html.parser')
+            job_list+=get_jobs(soup, type)
+            url = get_next_page(soup)
+            print(url);
+            soup = get_soup(url)
         except (TypeError, AttributeError):
             break
 
     return job_list
 
-    
 
 
-job_list = generate_jobs_array(job_list, soup)
+soup = get_soup("https://www.indeed.com/jobs?q=javascript&l=")
 
-print(len(job_list))
+get_number_of_jobs(soup)
+
+get_next_page(soup)
+soup = get_soup("https://www.indeed.com/jobs?q=react&l")
+
+get_next_page(soup)
+soup = get_soup("https://www.indeed.com/jobs?q=python&l=")
+get_next_page(soup)
+job_list += generate_jobs_array(job_list, soup, "python")
+
+
 for job_info in job_list:
     for gathered_job in job_info:
         print("Title: ", job_info["title"] )
@@ -105,4 +111,7 @@ for job_info in job_list:
         print ("Localtion: ",job_info["location"])
         print ("Summary: ", job_info["summary"])
         print ("Date: ", job_info["date"])
+        print ("Date: ", job_info["type"])
         print("")        
+
+print(len(job_list))
