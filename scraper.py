@@ -28,7 +28,7 @@ def get_next_page(soup):
 def get_jobs(soup, type):
     job_list = soup.find_all("div", class_="jobsearch-SerpJobCard")
     jobs = []
-
+    day = 0;
     job_list_dict = {}
     for job in job_list:
         title = job.find("a", class_="jobtitle").text.strip()
@@ -39,7 +39,7 @@ def get_jobs(soup, type):
             location = job.find("span", class_="location").text.strip()
         except (TypeError, AttributeError):
             location = ""
-        rating = job.find("span", class_="rating")
+        rating = job.find("span", class_="ratingsContent")
         if rating: 
             rating.text.strip()
         else: 
@@ -47,10 +47,9 @@ def get_jobs(soup, type):
         summary = job.find("div", class_="summary").text.strip()
         date = job.find("span", class_="date").text.strip().split(" ")
         date = date[0];
-        
         if(date.isnumeric()): 
            day = int(date)
-        if (location == "Remote" and (day < 2 or date == "Today")):
+        if (location == "Remote" and (date == "Today")):
             job_list_dict = {
                 "title": title if title else None,
                 "url": url if url else None,
