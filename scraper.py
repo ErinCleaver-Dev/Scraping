@@ -74,7 +74,7 @@ job_list = [];
 
 # gathers a list of jobs.  
 def generate_jobs_array(job_list, soup, type):
-    for i in range(100):
+    while True:
         try:
             job_list+=get_jobs(soup, type)
             url = get_next_page(soup)
@@ -90,7 +90,7 @@ def generate_jobs_array(job_list, soup, type):
 soup = get_soup("https://www.indeed.com/jobs?q=javascript&l=")
 get_number_of_jobs(soup)
 
-job_list += generate_jobs_array(job_list, soup, "javascript")
+job_list = generate_jobs_array(job_list, soup, "javascript")
 
 soup = get_soup("https://www.indeed.com/jobs?q=react&l")
 get_number_of_jobs(soup)
